@@ -27,7 +27,6 @@ jobs:
           - version_minor: 3.16
             patch: 3
 
-  
     steps:
       - name: Checkout out the codebase
         uses: actions/checkout@v3
