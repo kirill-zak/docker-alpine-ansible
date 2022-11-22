@@ -15,11 +15,9 @@ jobs:
       fail-fast: false
 
       matrix:
-        version_minor:
-          - 3.16
+        version_minor: [3.16]
+        patch: [0]
         include:
-          - version_minor: 3.16
-            patch: 0
           - version_minor: 3.16
             patch: 1
           - version_minor: 3.16
