@@ -1,0 +1,39 @@
+---
+name: CI
+'on':
+  pull_request:
+  push:
+    branches:
+      - master
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+
+    strategy: 
+      fail-fast: false
+
+      matrix:
+        version_minor: [3.16]
+        patch: [0]
+        include:
+          - version_minor: 3.16
+            patch: 1
+          - version_minor: 3.16
+            patch: 2
+          - version_minor: 3.16
+            patch: 3
+
+    steps:
+      - name: Checkout out the codebase
+        uses: actions/checkout@v3
+
+      - name: Test building image
+        run: docker build -t docker-alpine-ansible:${{ matrix.version_minor }}.${{ matrix.patch }} ./alpine${{ matrix.version_minor }}/. --build-arg ALPINE_VERSION=${{ matrix.version_minor }}.${{ matrix.patch }}
+      
+      - name: Run the built image
+        run: docker run --name test-container --detach --privileged --volume /sys/fs/cgroup:/sys/fs/cgroup:ro docker-alpine-ansible:${{ matrix.version_minor }}.${{ matrix.patch }}
+
+      - name: Verify Ansible is accessible in the built image
+        run: docker exec --tty test-container env TERM=xterm ansible --version
