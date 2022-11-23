@@ -1,5 +1,7 @@
+# Get version of Alpine Linux to build
 ARG ALPINE_VERSION
 
+# Use Alpine Linux Base image
 FROM alpine:${ALPINE_VERSION}
 LABEL maintainer="Kirill Ziuzin"
 ENV container=docker

@@ -1,2 +1,25 @@
 # docker-alpine-ansible
 Based on Alpine Linux Docker image with built-in Ansible for test playbooks and roles
+
+## Tags
+
+  - `latest`: Latest stable version of Alpine Linux 3.16.3 with built-in Ansible
+
+## How to Build
+
+To build the image on your own locally, do the following:
+
+  1. [Install Docker](https://docs.docker.com/engine/installation/).
+  2. `cd` into target directory. For example, target directory for `Alpine Linux 3.16.x` is `alpine3.16`
+  3. Run `docker build -t docker-alpine-ansible . --build-arg ALPINE_VERSION=3.16.<patch>`. Where `<patch>` is patch version of Alpine Linux. List of minor releases can found on official release page of Alpine Linux (https://www.alpinelinux.org/releases/)
+
+
+## How to Use
+
+  1. [Install Docker](https://docs.docker.com/engine/installation/).
+  2. Pull pre-build image via `docker image pull kirillzak/docker-alpine-ansible:latest` or build image.
+  3. Run a container from the image: `docker run --detach --privileged --volume /sys/fs/cgroup:/sys/fs/cgroup:ro docker-alpine-ansible:latest`
+
+## Author
+
+[Kirill Ziuzin](https://kirill-zak.ru/)
