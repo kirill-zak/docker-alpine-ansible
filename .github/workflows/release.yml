@@ -76,8 +76,8 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           build-args: ALPINE_VERSION=${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
-          context: ./alpine${{ matrix.version_branch }}/.
-          file: Dockerfile
+          context: ./
+          file: ./alpine${{ matrix.version_branch }}/Dockerfile
           platforms: linux/amd64
           push: true
           tags: kirillzak/docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
