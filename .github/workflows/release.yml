@@ -106,6 +106,7 @@ jobs:
       - name: Build and push image
         uses: docker/build-push-action@v3
         with:
+          build-args: ALPINE_VERSION=3.16.3
           context: ./
           file: ./alpine3.16/Dockerfile
           platforms: linux/amd64
