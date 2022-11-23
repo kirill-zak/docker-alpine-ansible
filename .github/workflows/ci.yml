@@ -15,25 +15,25 @@ jobs:
       fail-fast: false
 
       matrix:
-        version_minor: [3.16]
-        patch: [0]
+        version_branch: [3.16]
+        version_minor_release: [0]
         include:
-          - version_minor: 3.16
-            patch: 1
-          - version_minor: 3.16
-            patch: 2
-          - version_minor: 3.16
-            patch: 3
+          - version_branch: 3.16
+            version_minor_release: 1
+          - version_branch: 3.16
+            version_minor_release: 2
+          - version_branch: 3.16
+            version_minor_release: 3
 
     steps:
       - name: Checkout out the codebase
         uses: actions/checkout@v3
 
       - name: Test building image
-        run: docker build -t docker-alpine-ansible:${{ matrix.version_minor }}.${{ matrix.patch }} ./alpine${{ matrix.version_minor }}/. --build-arg ALPINE_VERSION=${{ matrix.version_minor }}.${{ matrix.patch }}
+        run: docker build -t docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }} ./alpine${{ matrix.version_branch }}/. --build-arg ALPINE_VERSION=${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
       
       - name: Run the built image
-        run: docker run --name test-container --detach --privileged --volume /sys/fs/cgroup:/sys/fs/cgroup:ro docker-alpine-ansible:${{ matrix.version_minor }}.${{ matrix.patch }}
+        run: docker run --name test-container --detach --privileged --volume /sys/fs/cgroup:/sys/fs/cgroup:ro docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
 
       - name: Verify Ansible is accessible in the built image
         run: docker exec --tty test-container env TERM=xterm ansible --version
