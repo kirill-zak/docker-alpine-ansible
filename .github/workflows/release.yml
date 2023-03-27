@@ -1,14 +1,22 @@
 ---
 name: Release
-'on':
+
+on:
   push:
     tags:
       - '*'
+
+env:
+  REGISTRY: ghcr.io
 
 jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+      packages: write
 
     strategy: 
       fail-fast: false
@@ -43,10 +51,14 @@ jobs:
       - name: Verify Ansible is accessible in the built image
         run: docker exec --tty test-container env TERM=xterm ansible --version
 
-  tag-release:
-    name: Release for tags
+  docker-hub-tag-release:
+    name: Release tags for Docker Hub
     runs-on: ubuntu-latest
     needs: test
+
+    permissions:
+      contents: read
+      packages: write
 
     strategy: 
       fail-fast: false
@@ -85,7 +97,7 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
       - name: Build and push image
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           build-args: ALPINE_VERSION=${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
           context: ./
@@ -94,8 +106,57 @@ jobs:
           push: true
           tags: kirillzak/docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
 
-  latest-release:
-    name: Release
+  ghcr-tag-release:
+    name: GitHub Hub Container Registry latest release
+    runs-on: ubuntu-latest
+    needs: test
+
+    permissions:
+      contents: read
+      packages: write
+
+    strategy: 
+      fail-fast: false
+
+      matrix:
+        version_branch: [3.16, 3.17]
+        version_minor_release: [0]
+        include:
+          - version_branch: 3.16
+            version_minor_release: 1
+          - version_branch: 3.16
+            version_minor_release: 2
+          - version_branch: 3.16
+            version_minor_release: 3
+          - version_branch: 3.16
+            version_minor_release: 4
+          - version_branch: 3.17
+            version_minor_release: 1
+          - version_branch: 3.17
+            version_minor_release: 2
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_REGISTRY_TOKEN }}
+
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v4
+        with:
+          build-args: ALPINE_VERSION=${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
+          context: ./
+          file: ./alpine${{ matrix.version_branch }}/Dockerfile
+          push: true
+          tags: ghcr.io/${{ github.repository }}:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
+
+  docker-hub-latest-release:
+    name: Docker Hub latest release
     runs-on: ubuntu-latest
     needs: test
 
@@ -121,6 +182,34 @@ jobs:
           build-args: ALPINE_VERSION=3.17.2
           context: ./
           file: ./alpine3.17/Dockerfile
-          platforms: linux/amd64
           push: true
           tags: kirillzak/docker-alpine-ansible:latest
+
+  ghcr-latest-release:
+    name: GitHub Hub Container Registry latest release
+    runs-on: ubuntu-latest
+    needs: test
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_REGISTRY_TOKEN }}
+
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v2
+        with:
+          build-args: ALPINE_VERSION=3.17.2
+          context: ./
+          file: ./alpine3.17/Dockerfile
+          push: true
+          tags: ghcr.io/${{ github.repository }}:latest
