@@ -26,6 +26,8 @@ jobs:
             version_minor_release: 3
           - version_branch: 3.16
             version_minor_release: 4
+          - version_branch: 3.17
+            version_minor_release: 1
 
     steps:
       - name: Checkout out the codebase
