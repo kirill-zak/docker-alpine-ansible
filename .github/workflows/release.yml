@@ -6,9 +6,6 @@ on:
     tags:
       - '*'
 
-env:
-  GHCR_REGISTRY: ghcr.io
-
 jobs:
   test:
     name: Test
@@ -113,7 +110,7 @@ jobs:
           push: true
           tags: |
             kirillzak/docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
-            ${{ GHCR_REGISTRY }}/${{ github.repository }}:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
+            ghcr.io/${{ github.repository }}:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
 
   latest-release:
     name: Latest release
@@ -152,4 +149,4 @@ jobs:
           push: true
           tags: |
             kirillzak/docker-alpine-ansible:latest
-            ${{ GHCR_REGISTRY }}/${{ github.repository }}:latest
+            ghcr.io/${{ github.repository }}:latest
