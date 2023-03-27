@@ -27,6 +27,8 @@ jobs:
             version_minor_release: 4
           - version_branch: 3.17
             version_minor_release: 1
+          - version_branch: 3.17
+            version_minor_release: 2
 
     steps:
       - name: Checkout out the codebase
@@ -63,6 +65,8 @@ jobs:
             version_minor_release: 4
           - version_branch: 3.17
             version_minor_release: 1
+          - version_branch: 3.17
+            version_minor_release: 2
 
     steps:
       - name: Checkout out the codebase
@@ -114,7 +118,7 @@ jobs:
       - name: Build and push image
         uses: docker/build-push-action@v3
         with:
-          build-args: ALPINE_VERSION=3.17.1
+          build-args: ALPINE_VERSION=3.17.2
           context: ./
           file: ./alpine3.17/Dockerfile
           platforms: linux/amd64
