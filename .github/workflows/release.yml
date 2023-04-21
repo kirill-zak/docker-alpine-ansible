@@ -20,24 +20,12 @@ jobs:
 
       matrix:
         version_branch: [3.16, 3.17]
-        version_minor_release: [0]
-        include:
-          - version_branch: 3.16
-            version_minor_release: 1
-          - version_branch: 3.16
-            version_minor_release: 2
-          - version_branch: 3.16
-            version_minor_release: 3
-          - version_branch: 3.16
+        version_minor_release: [0, 1, 2, 3, 4, 5]
+        exclude:
+          - version_branch: 3.17
             version_minor_release: 4
-          - version_branch: 3.16
+          - version_branch: 3.17
             version_minor_release: 5
-          - version_branch: 3.17
-            version_minor_release: 1
-          - version_branch: 3.17
-            version_minor_release: 2
-          - version_branch: 3.17
-            version_minor_release: 3
 
     steps:
       - name: Checkout out the codebase
@@ -66,24 +54,12 @@ jobs:
 
       matrix:
         version_branch: [3.16, 3.17]
-        version_minor_release: [0]
-        include:
-          - version_branch: 3.16
-            version_minor_release: 1
-          - version_branch: 3.16
-            version_minor_release: 2
-          - version_branch: 3.16
-            version_minor_release: 3
-          - version_branch: 3.16
+        version_minor_release: [0, 1, 2, 3, 4, 5]
+        exclude:
+          - version_branch: 3.17
             version_minor_release: 4
-          - version_branch: 3.16
+          - version_branch: 3.17
             version_minor_release: 5
-          - version_branch: 3.17
-            version_minor_release: 1
-          - version_branch: 3.17
-            version_minor_release: 2
-          - version_branch: 3.17
-            version_minor_release: 3
 
     steps:
       - name: Checkout out the codebase
