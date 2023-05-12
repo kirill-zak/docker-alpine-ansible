@@ -19,12 +19,22 @@ jobs:
       fail-fast: false
 
       matrix:
-        version_branch: [3.16, 3.17]
+        version_branch: [3.16, 3.17, 3.18]
         version_minor_release: [0, 1, 2, 3, 4, 5]
         exclude:
           - version_branch: 3.17
             version_minor_release: 4
           - version_branch: 3.17
+            version_minor_release: 5
+          - version_branch: 3.18
+            version_minor_release: 1
+          - version_branch: 3.18
+            version_minor_release: 2
+          - version_branch: 3.18
+            version_minor_release: 3
+          - version_branch: 3.18
+            version_minor_release: 4
+          - version_branch: 3.18
             version_minor_release: 5
 
     steps:
@@ -53,12 +63,22 @@ jobs:
       fail-fast: false
 
       matrix:
-        version_branch: [3.16, 3.17]
+        version_branch: [3.16, 3.17, 3.18]
         version_minor_release: [0, 1, 2, 3, 4, 5]
         exclude:
           - version_branch: 3.17
             version_minor_release: 4
           - version_branch: 3.17
+            version_minor_release: 5
+          - version_branch: 3.18
+            version_minor_release: 1
+          - version_branch: 3.18
+            version_minor_release: 2
+          - version_branch: 3.18
+            version_minor_release: 3
+          - version_branch: 3.18
+            version_minor_release: 4
+          - version_branch: 3.18
             version_minor_release: 5
 
     steps:
@@ -127,9 +147,9 @@ jobs:
       - name: Build and push image
         uses: docker/build-push-action@v3
         with:
-          build-args: ALPINE_VERSION=3.17.3
+          build-args: ALPINE_VERSION=3.18.0
           context: ./
-          file: ./alpine3.17/Dockerfile
+          file: ./alpine3.18/Dockerfile
           platforms: linux/amd64
           push: true
           tags: |
