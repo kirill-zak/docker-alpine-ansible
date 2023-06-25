@@ -29,8 +29,6 @@ jobs:
           - version_branch: 3.18
             version_minor_release: 1
           - version_branch: 3.18
-            version_minor_release: 2
-          - version_branch: 3.18
             version_minor_release: 3
           - version_branch: 3.18
             version_minor_release: 4
@@ -74,8 +72,6 @@ jobs:
             version_minor_release: 6
           - version_branch: 3.18
             version_minor_release: 1
-          - version_branch: 3.18
-            version_minor_release: 2
           - version_branch: 3.18
             version_minor_release: 3
           - version_branch: 3.18
@@ -151,7 +147,7 @@ jobs:
       - name: Build and push image
         uses: docker/build-push-action@v3
         with:
-          build-args: ALPINE_VERSION=3.18.0
+          build-args: ALPINE_VERSION=3.18.2
           context: ./
           file: ./alpine3.18/Dockerfile
           platforms: linux/amd64
