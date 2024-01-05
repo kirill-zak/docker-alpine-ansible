@@ -75,6 +75,9 @@ jobs:
       fail-fast: false
 
       matrix:
+        platform:
+          - linux/386
+          - linux/amd64
         version_branch: [3.16, 3.17, 3.18, 3.19]
         version_minor_release: [0, 1, 2, 3, 4, 5, 6, 7]
         exclude:
@@ -134,7 +137,7 @@ jobs:
           build-args: ALPINE_VERSION=${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
           context: ./
           file: ./alpine${{ matrix.version_branch }}/Dockerfile
-          platforms: linux/amd64
+          platforms: ${{ matrix.platform }}
           push: true
           tags: |
             kirillzak/docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
@@ -144,6 +147,14 @@ jobs:
     name: Latest release
     runs-on: ubuntu-latest
     needs: test
+
+    strategy: 
+      fail-fast: false
+
+      matrix:
+        platform:
+          - linux/386
+          - linux/amd64
 
     steps:
       - name: Checkout out the codebase
@@ -174,7 +185,7 @@ jobs:
           build-args: ALPINE_VERSION=3.19.0
           context: ./
           file: ./alpine3.19/Dockerfile
-          platforms: linux/amd64
+          platforms: ${{ matrix.platform }}
           push: true
           tags: |
             kirillzak/docker-alpine-ansible:latest

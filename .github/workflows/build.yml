@@ -11,6 +11,9 @@ jobs:
       fail-fast: false
 
       matrix:
+        platform:
+          - linux/386
+          - linux/amd64
         version_branch: [3.16, 3.17, 3.18, 3.19]
         version_minor_release: [0, 1, 2, 3, 4, 5, 6, 7]
         exclude:
@@ -56,8 +59,11 @@ jobs:
         with:
           build-args: ALPINE_VERSION=${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
           context: ./
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          load: true
           file: ./alpine${{ matrix.version_branch }}/Dockerfile
-          platforms: linux/amd64
+          platforms: ${{ matrix.platform }}
           push: false
           tags: |
             kirillzak/docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
