@@ -7,6 +7,9 @@ on:
       - '*'
   workflow_dispatch:
 
+env:
+  REGISTRY_IMAGE: kirillzak/docker-alpine-ansible
+
 jobs:
   test:
     name: Test
@@ -113,6 +116,12 @@ jobs:
       - name: Checkout out the codebase
         uses: actions/checkout@v3
 
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY_IMAGE }}
+
       - name: Add Qemu
         uses: docker/setup-qemu-action@v2
 
@@ -133,16 +142,32 @@ jobs:
           password: ${{ secrets.GHCR_REGISTRY_TOKEN }}
 
       - name: Build and push image
+        id: build
         uses: docker/build-push-action@v5
         with:
           build-args: ALPINE_VERSION=${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
           context: ./
           file: ./alpine${{ matrix.version_branch }}/Dockerfile
           platforms: ${{ matrix.platform }}
+          labels: ${{ steps.meta.outputs.labels }}
           push: true
           tags: |
             kirillzak/docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
             ghcr.io/${{ github.repository }}:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
+      
+      - name: Export digest
+        run: |
+          mkdir -p /tmp/digests
+          digest="${{ steps.build.outputs.digest }}"
+          touch "/tmp/digests/${digest#sha256:}"
+
+      - name: Upload digest
+        uses: actions/upload-artifact@v3
+        with:
+          name: digests
+          path: /tmp/digests/*
+          if-no-files-found: error
+          retention-days: 1
 
   latest-release:
     name: Latest release
