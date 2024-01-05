@@ -145,7 +145,7 @@ jobs:
           build-args: ALPINE_VERSION=${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
           context: ./
           file: ./alpine${{ matrix.version_branch }}/Dockerfile
-          platforms: linux/386,linux/amd64
+          platforms: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8
           labels: ${{ steps.meta.outputs.labels }}
           push: true
           tags: |
@@ -200,7 +200,7 @@ jobs:
           build-args: ALPINE_VERSION=3.19.0
           context: ./
           file: ./alpine3.19/Dockerfile
-          platforms: linux/386,linux/amd64
+          platforms: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8
           push: true
           tags: |
             kirillzak/docker-alpine-ansible:latest
