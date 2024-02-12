@@ -23,8 +23,6 @@ jobs:
         version_minor_release: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         exclude:
           - version_branch: 3.17
-            version_minor_release: 7
-          - version_branch: 3.17
             version_minor_release: 8
           - version_branch: 3.17
             version_minor_release: 9
@@ -64,10 +62,10 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Add Qemu
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
 
       - name: Add Docker BuildX
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
 
       - name: Build an image
         uses: docker/build-push-action@v5
