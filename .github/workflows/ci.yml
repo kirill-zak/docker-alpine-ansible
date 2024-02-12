@@ -60,7 +60,7 @@ jobs:
 
     steps:
       - name: Checkout out the codebase
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Test building image
         run: docker build -t docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }} ./alpine${{ matrix.version_branch }}/. --build-arg ALPINE_VERSION=${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
