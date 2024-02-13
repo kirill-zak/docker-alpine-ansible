@@ -213,6 +213,7 @@ jobs:
           password: ${{ secrets.GHCR_REGISTRY_TOKEN }}
 
       - name: Build and push image
+        id: build
         uses: docker/build-push-action@v5
         with:
           build-args: ALPINE_VERSION=3.19.0
