@@ -213,7 +213,6 @@ jobs:
           password: ${{ secrets.GHCR_REGISTRY_TOKEN }}
 
       - name: Build and push image
-        id: build
         uses: docker/build-push-action@v5
         with:
           build-args: ALPINE_VERSION=3.19.0
@@ -225,17 +224,3 @@ jobs:
           tags: |
             kirillzak/docker-alpine-ansible:latest
             ghcr.io/${{ github.repository }}:latest
-      
-      - name: Export digest
-        run: |
-          mkdir -p /tmp/digests
-          digest="${{ steps.build.outputs.digest }}"
-          touch "/tmp/digests/${digest#sha256:}"
-
-      - name: Upload digest
-        uses: actions/upload-artifact@v4
-        with:
-          name: digests
-          path: /tmp/digests/*
-          if-no-files-found: error
-          retention-days: 1
