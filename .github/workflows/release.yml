@@ -33,8 +33,6 @@ jobs:
           - version_branch: 3.18
             version_minor_release: 1
           - version_branch: 3.18
-            version_minor_release: 5
-          - version_branch: 3.18
             version_minor_release: 6
           - version_branch: 3.18
             version_minor_release: 7
@@ -96,8 +94,6 @@ jobs:
             version_minor_release: 9
           - version_branch: 3.18
             version_minor_release: 1
-          - version_branch: 3.18
-            version_minor_release: 5
           - version_branch: 3.18
             version_minor_release: 6
           - version_branch: 3.18
@@ -175,7 +171,7 @@ jobs:
           touch "/tmp/digests/${digest#sha256:}"
 
       - name: Upload digest
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: digests
           path: /tmp/digests/*
@@ -190,6 +186,12 @@ jobs:
     steps:
       - name: Checkout out the codebase
         uses: actions/checkout@v4
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY_IMAGE }}
 
       - name: Add Qemu
         uses: docker/setup-qemu-action@v3
@@ -211,13 +213,29 @@ jobs:
           password: ${{ secrets.GHCR_REGISTRY_TOKEN }}
 
       - name: Build and push image
+        id: build
         uses: docker/build-push-action@v5
         with:
           build-args: ALPINE_VERSION=3.19.0
           context: ./
           file: ./alpine3.19/Dockerfile
           platforms: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
+          labels: ${{ steps.meta.outputs.labels }}
           push: true
           tags: |
             kirillzak/docker-alpine-ansible:latest
             ghcr.io/${{ github.repository }}:latest
+      
+      - name: Export digest
+        run: |
+          mkdir -p /tmp/digests
+          digest="${{ steps.build.outputs.digest }}"
+          touch "/tmp/digests/${digest#sha256:}"
+
+      - name: Upload digest
+        uses: actions/upload-artifact@v4
+        with:
+          name: digests
+          path: /tmp/digests/*
+          if-no-files-found: error
+          retention-days: 1
