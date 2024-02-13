@@ -171,7 +171,7 @@ jobs:
           touch "/tmp/digests/${digest#sha256:}"
 
       - name: Upload digest
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: digests
           path: /tmp/digests/*
@@ -224,3 +224,17 @@ jobs:
           tags: |
             kirillzak/docker-alpine-ansible:latest
             ghcr.io/${{ github.repository }}:latest
+
+      - name: Export digest
+        run: |
+          mkdir -p /tmp/digests
+          digest="${{ steps.build.outputs.digest }}"
+          touch "/tmp/digests/${digest#sha256:}"
+
+      - name: Upload digest
+        uses: actions/upload-artifact@v3
+        with:
+          name: digests
+          path: /tmp/digests/*
+          if-no-files-found: error
+          retention-days: 1
