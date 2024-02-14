@@ -33,8 +33,6 @@ jobs:
           - version_branch: 3.18
             version_minor_release: 1
           - version_branch: 3.18
-            version_minor_release: 6
-          - version_branch: 3.18
             version_minor_release: 7
           - version_branch: 3.18
             version_minor_release: 8
@@ -94,8 +92,6 @@ jobs:
             version_minor_release: 9
           - version_branch: 3.18
             version_minor_release: 1
-          - version_branch: 3.18
-            version_minor_release: 6
           - version_branch: 3.18
             version_minor_release: 7
           - version_branch: 3.18
