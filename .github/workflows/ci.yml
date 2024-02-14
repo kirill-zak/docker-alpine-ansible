@@ -32,8 +32,6 @@ jobs:
           - version_branch: 3.18
             version_minor_release: 9
           - version_branch: 3.19
-            version_minor_release: 1
-          - version_branch: 3.19
             version_minor_release: 2
           - version_branch: 3.19
             version_minor_release: 3
