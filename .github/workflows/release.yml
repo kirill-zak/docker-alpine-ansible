@@ -11,49 +11,16 @@ env:
   REGISTRY_IMAGE: kirillzak/docker-alpine-ansible
 
 jobs:
-  test:
-    name: Test
+  test-3-16:
+    name: Test for branch 3.16
     runs-on: ubuntu-latest
-    
-    permissions:
-      contents: read
-      packages: write
 
     strategy: 
       fail-fast: false
 
       matrix:
-        version_branch: [3.16, 3.17, 3.18, 3.19]
+        version_branch: ['3.16']
         version_minor_release: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-        exclude:
-          - version_branch: 3.17
-            version_minor_release: 8
-          - version_branch: 3.17
-            version_minor_release: 9
-          - version_branch: 3.18
-            version_minor_release: 1
-          - version_branch: 3.18
-            version_minor_release: 7
-          - version_branch: 3.18
-            version_minor_release: 8
-          - version_branch: 3.18
-            version_minor_release: 9
-          - version_branch: 3.19
-            version_minor_release: 2
-          - version_branch: 3.19
-            version_minor_release: 3
-          - version_branch: 3.19
-            version_minor_release: 4
-          - version_branch: 3.19
-            version_minor_release: 5
-          - version_branch: 3.19
-            version_minor_release: 6
-          - version_branch: 3.19
-            version_minor_release: 7
-          - version_branch: 3.19
-            version_minor_release: 8
-          - version_branch: 3.19
-            version_minor_release: 9
 
     steps:
       - name: Checkout out the codebase
@@ -68,10 +35,106 @@ jobs:
       - name: Verify Ansible is accessible in the built image
         run: docker exec --tty test-container env TERM=xterm ansible --version
 
-  tag-release:
-    name: Release tags
+  test-3-17:
+    name: Test for branch 3.17
     runs-on: ubuntu-latest
-    needs: test
+
+    strategy: 
+      fail-fast: false
+
+      matrix:
+        version_branch: ['3.17']
+        version_minor_release: [0, 1, 2, 3, 4, 5, 6, 7]
+
+    steps:
+      - name: Checkout out the codebase
+        uses: actions/checkout@v4
+
+      - name: Test building image
+        run: docker build -t docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }} ./alpine${{ matrix.version_branch }}/. --build-arg ALPINE_VERSION=${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
+      
+      - name: Run the built image
+        run: docker run --name test-container --detach --privileged --volume /sys/fs/cgroup:/sys/fs/cgroup:ro docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
+
+      - name: Verify Ansible is accessible in the built image
+        run: docker exec --tty test-container env TERM=xterm ansible --version
+
+  test-3-18:
+    name: Test for branch 3.18
+    runs-on: ubuntu-latest
+
+    strategy: 
+      fail-fast: false
+
+      matrix:
+        version_branch: ['3.18']
+        version_minor_release: [0, 2, 3, 4, 5, 6]
+
+    steps:
+      - name: Checkout out the codebase
+        uses: actions/checkout@v4
+
+      - name: Test building image
+        run: docker build -t docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }} ./alpine${{ matrix.version_branch }}/. --build-arg ALPINE_VERSION=${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
+      
+      - name: Run the built image
+        run: docker run --name test-container --detach --privileged --volume /sys/fs/cgroup:/sys/fs/cgroup:ro docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
+
+      - name: Verify Ansible is accessible in the built image
+        run: docker exec --tty test-container env TERM=xterm ansible --version
+
+  test-3-19:
+    name: Test for branch 3.19
+    runs-on: ubuntu-latest
+
+    strategy: 
+      fail-fast: false
+
+      matrix:
+        version_branch: ['3.19']
+        version_minor_release: [0, 1]
+
+    steps:
+      - name: Checkout out the codebase
+        uses: actions/checkout@v4
+
+      - name: Test building image
+        run: docker build -t docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }} ./alpine${{ matrix.version_branch }}/. --build-arg ALPINE_VERSION=${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
+      
+      - name: Run the built image
+        run: docker run --name test-container --detach --privileged --volume /sys/fs/cgroup:/sys/fs/cgroup:ro docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
+
+      - name: Verify Ansible is accessible in the built image
+        run: docker exec --tty test-container env TERM=xterm ansible --version
+
+  test-3-20:
+    name: Test for branch 3.20
+    runs-on: ubuntu-latest
+
+    strategy: 
+      fail-fast: false
+
+      matrix:
+        version_branch: ['3.20']
+        version_minor_release: [0]
+
+    steps:
+      - name: Checkout out the codebase
+        uses: actions/checkout@v4
+
+      - name: Test building image
+        run: docker build -t docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }} ./alpine${{ matrix.version_branch }}/. --build-arg ALPINE_VERSION=${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
+      
+      - name: Run the built image
+        run: docker run --name test-container --detach --privileged --volume /sys/fs/cgroup:/sys/fs/cgroup:ro docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
+
+      - name: Verify Ansible is accessible in the built image
+        run: docker exec --tty test-container env TERM=xterm ansible --version
+
+  tag-release-3-16:
+    name: Release tags for branch 3.16
+    runs-on: ubuntu-latest
+    needs: test-3-16
 
     permissions:
       contents: read
@@ -81,37 +144,300 @@ jobs:
       fail-fast: false
 
       matrix:
-        version_branch: [3.16, 3.17, 3.18, 3.19]
+        version_branch: ['3.16']
         version_minor_release: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-        exclude:
-          - version_branch: 3.17
-            version_minor_release: 8
-          - version_branch: 3.17
-            version_minor_release: 9
-          - version_branch: 3.18
-            version_minor_release: 1
-          - version_branch: 3.18
-            version_minor_release: 7
-          - version_branch: 3.18
-            version_minor_release: 8
-          - version_branch: 3.18
-            version_minor_release: 9
-          - version_branch: 3.19
-            version_minor_release: 2
-          - version_branch: 3.19
-            version_minor_release: 3
-          - version_branch: 3.19
-            version_minor_release: 4
-          - version_branch: 3.19
-            version_minor_release: 5
-          - version_branch: 3.19
-            version_minor_release: 6
-          - version_branch: 3.19
-            version_minor_release: 7
-          - version_branch: 3.19
-            version_minor_release: 8
-          - version_branch: 3.19
-            version_minor_release: 9
+
+    steps:
+      - name: Checkout out the codebase
+        uses: actions/checkout@v4
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY_IMAGE }}
+
+      - name: Add Qemu
+        uses: docker/setup-qemu-action@v3
+
+      - name: Add Docker BuildX
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to DockerHub Registry
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_REGISTRY_TOKEN }}
+
+      - name: Build and push image
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          build-args: ALPINE_VERSION=${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
+          context: ./
+          file: ./alpine${{ matrix.version_branch }}/Dockerfile
+          platforms: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
+          labels: ${{ steps.meta.outputs.labels }}
+          push: true
+          tags: |
+            kirillzak/docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
+            ghcr.io/${{ github.repository }}:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
+      
+      - name: Export digest
+        run: |
+          mkdir -p /tmp/digests
+          digest="${{ steps.build.outputs.digest }}"
+          touch "/tmp/digests/${digest#sha256:}"
+
+      - name: Upload digest
+        uses: actions/upload-artifact@v4
+        with:
+          name: digests
+          path: /tmp/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
+  tag-release-3-17:
+    name: Release tags for branch 3.17
+    runs-on: ubuntu-latest
+    needs: test-3-17
+
+    permissions:
+      contents: read
+      packages: write
+
+    strategy: 
+      fail-fast: false
+
+      matrix:
+        version_branch: ['3.17']
+        version_minor_release: [0, 1, 2, 3, 4, 5, 6, 7]
+
+    steps:
+      - name: Checkout out the codebase
+        uses: actions/checkout@v4
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY_IMAGE }}
+
+      - name: Add Qemu
+        uses: docker/setup-qemu-action@v3
+
+      - name: Add Docker BuildX
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to DockerHub Registry
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_REGISTRY_TOKEN }}
+
+      - name: Build and push image
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          build-args: ALPINE_VERSION=${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
+          context: ./
+          file: ./alpine${{ matrix.version_branch }}/Dockerfile
+          platforms: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
+          labels: ${{ steps.meta.outputs.labels }}
+          push: true
+          tags: |
+            kirillzak/docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
+            ghcr.io/${{ github.repository }}:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
+      
+      - name: Export digest
+        run: |
+          mkdir -p /tmp/digests
+          digest="${{ steps.build.outputs.digest }}"
+          touch "/tmp/digests/${digest#sha256:}"
+
+      - name: Upload digest
+        uses: actions/upload-artifact@v4
+        with:
+          name: digests
+          path: /tmp/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
+  tag-release-3-18:
+    name: Release tags for branch 3.18
+    runs-on: ubuntu-latest
+    needs: test-3-18
+
+    permissions:
+      contents: read
+      packages: write
+
+    strategy: 
+      fail-fast: false
+
+      matrix:
+        version_branch: ['3.18']
+        version_minor_release: [0, 2, 3, 4, 5, 6]
+
+    steps:
+      - name: Checkout out the codebase
+        uses: actions/checkout@v4
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY_IMAGE }}
+
+      - name: Add Qemu
+        uses: docker/setup-qemu-action@v3
+
+      - name: Add Docker BuildX
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to DockerHub Registry
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_REGISTRY_TOKEN }}
+
+      - name: Build and push image
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          build-args: ALPINE_VERSION=${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
+          context: ./
+          file: ./alpine${{ matrix.version_branch }}/Dockerfile
+          platforms: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
+          labels: ${{ steps.meta.outputs.labels }}
+          push: true
+          tags: |
+            kirillzak/docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
+            ghcr.io/${{ github.repository }}:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
+      
+      - name: Export digest
+        run: |
+          mkdir -p /tmp/digests
+          digest="${{ steps.build.outputs.digest }}"
+          touch "/tmp/digests/${digest#sha256:}"
+
+      - name: Upload digest
+        uses: actions/upload-artifact@v4
+        with:
+          name: digests
+          path: /tmp/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
+  tag-release-3-19:
+    name: Release tags for branch 3.19
+    runs-on: ubuntu-latest
+    needs: test-3-19
+
+    permissions:
+      contents: read
+      packages: write
+
+    strategy: 
+      fail-fast: false
+
+      matrix:
+        version_branch: ['3.19']
+        version_minor_release: [0, 1]
+
+    steps:
+      - name: Checkout out the codebase
+        uses: actions/checkout@v4
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY_IMAGE }}
+
+      - name: Add Qemu
+        uses: docker/setup-qemu-action@v3
+
+      - name: Add Docker BuildX
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to DockerHub Registry
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_REGISTRY_TOKEN }}
+
+      - name: Build and push image
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          build-args: ALPINE_VERSION=${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
+          context: ./
+          file: ./alpine${{ matrix.version_branch }}/Dockerfile
+          platforms: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
+          labels: ${{ steps.meta.outputs.labels }}
+          push: true
+          tags: |
+            kirillzak/docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
+            ghcr.io/${{ github.repository }}:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
+      
+      - name: Export digest
+        run: |
+          mkdir -p /tmp/digests
+          digest="${{ steps.build.outputs.digest }}"
+          touch "/tmp/digests/${digest#sha256:}"
+
+      - name: Upload digest
+        uses: actions/upload-artifact@v4
+        with:
+          name: digests
+          path: /tmp/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
+  tag-release-3-20:
+    name: Release tags for branch 3.20
+    runs-on: ubuntu-latest
+    needs: test-3-20
+
+    permissions:
+      contents: read
+      packages: write
+
+    strategy: 
+      fail-fast: false
+
+      matrix:
+        version_branch: ['3.20']
+        version_minor_release: [0]
 
     steps:
       - name: Checkout out the codebase
@@ -208,9 +534,9 @@ jobs:
         id: build
         uses: docker/build-push-action@v5
         with:
-          build-args: ALPINE_VERSION=3.19.1
+          build-args: ALPINE_VERSION=3.20.0
           context: ./
-          file: ./alpine3.19/Dockerfile
+          file: ./alpine3.20/Dockerfile
           platforms: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
           labels: ${{ steps.meta.outputs.labels }}
           push: true
