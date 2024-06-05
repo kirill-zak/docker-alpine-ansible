@@ -3,7 +3,183 @@ name: Build
 on: workflow_dispatch
 
 jobs:
-  test-build:
+  test-build-3-16:
+    name: Test build of image for branch 3.16
+    runs-on: ubuntu-latest
+
+    strategy: 
+      fail-fast: false
+
+      matrix:
+        platform:
+          - linux/386
+          - linux/amd64
+          - linux/arm/v6
+          - linux/arm/v7
+          - linux/arm64/v8
+          - linux/ppc64le
+          - linux/s390x
+        version_branch: [3.16]
+        version_minor_release: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+    steps:
+      - name: Checkout out the codebase
+        uses: actions/checkout@v4
+
+      - name: Add Qemu
+        uses: docker/setup-qemu-action@v3
+
+      - name: Add Docker BuildX
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build an image
+        uses: docker/build-push-action@v5
+        with:
+          build-args: ALPINE_VERSION=${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
+          context: ./
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          load: true
+          file: ./alpine${{ matrix.version_branch }}/Dockerfile
+          platforms: ${{ matrix.platform }}
+          push: false
+          tags: |
+            kirillzak/docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
+            ghcr.io/${{ github.repository }}:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
+
+  test-build-3-17:
+    name: Test build of image for branch 3.17
+    runs-on: ubuntu-latest
+
+    strategy: 
+      fail-fast: false
+
+      matrix:
+        platform:
+          - linux/386
+          - linux/amd64
+          - linux/arm/v6
+          - linux/arm/v7
+          - linux/arm64/v8
+          - linux/ppc64le
+          - linux/s390x
+        version_branch: [3.17]
+        version_minor_release: [0, 1, 2, 3, 4, 5, 6, 7]
+
+    steps:
+      - name: Checkout out the codebase
+        uses: actions/checkout@v4
+
+      - name: Add Qemu
+        uses: docker/setup-qemu-action@v3
+
+      - name: Add Docker BuildX
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build an image
+        uses: docker/build-push-action@v5
+        with:
+          build-args: ALPINE_VERSION=${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
+          context: ./
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          load: true
+          file: ./alpine${{ matrix.version_branch }}/Dockerfile
+          platforms: ${{ matrix.platform }}
+          push: false
+          tags: |
+            kirillzak/docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
+            ghcr.io/${{ github.repository }}:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
+
+  test-build-3-18:
+    name: Test build of image for branch 3.18
+    runs-on: ubuntu-latest
+
+    strategy: 
+      fail-fast: false
+
+      matrix:
+        platform:
+          - linux/386
+          - linux/amd64
+          - linux/arm/v6
+          - linux/arm/v7
+          - linux/arm64/v8
+          - linux/ppc64le
+          - linux/s390x
+        version_branch: [3.18]
+        version_minor_release: [0, 2, 3, 4, 5, 6]
+
+    steps:
+      - name: Checkout out the codebase
+        uses: actions/checkout@v4
+
+      - name: Add Qemu
+        uses: docker/setup-qemu-action@v3
+
+      - name: Add Docker BuildX
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build an image
+        uses: docker/build-push-action@v5
+        with:
+          build-args: ALPINE_VERSION=${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
+          context: ./
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          load: true
+          file: ./alpine${{ matrix.version_branch }}/Dockerfile
+          platforms: ${{ matrix.platform }}
+          push: false
+          tags: |
+            kirillzak/docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
+            ghcr.io/${{ github.repository }}:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
+
+  test-build-3-19:
+    name: Test build of image for branch 3.19
+    runs-on: ubuntu-latest
+
+    strategy: 
+      fail-fast: false
+
+      matrix:
+        platform:
+          - linux/386
+          - linux/amd64
+          - linux/arm/v6
+          - linux/arm/v7
+          - linux/arm64/v8
+          - linux/ppc64le
+          - linux/s390x
+        version_branch: [3.19]
+        version_minor_release: [0, 1]
+
+    steps:
+      - name: Checkout out the codebase
+        uses: actions/checkout@v4
+
+      - name: Add Qemu
+        uses: docker/setup-qemu-action@v3
+
+      - name: Add Docker BuildX
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build an image
+        uses: docker/build-push-action@v5
+        with:
+          build-args: ALPINE_VERSION=${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
+          context: ./
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          load: true
+          file: ./alpine${{ matrix.version_branch }}/Dockerfile
+          platforms: ${{ matrix.platform }}
+          push: false
+          tags: |
+            kirillzak/docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
+            ghcr.io/${{ github.repository }}:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
+
+  test-build-3-20:
     name: Test build of image
     runs-on: ubuntu-latest
 
@@ -19,37 +195,8 @@ jobs:
           - linux/arm64/v8
           - linux/ppc64le
           - linux/s390x
-        version_branch: [3.16, 3.17, 3.18, 3.19]
-        version_minor_release: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-        exclude:
-          - version_branch: 3.17
-            version_minor_release: 8
-          - version_branch: 3.17
-            version_minor_release: 9
-          - version_branch: 3.18
-            version_minor_release: 1
-          - version_branch: 3.18
-            version_minor_release: 7
-          - version_branch: 3.18
-            version_minor_release: 8
-          - version_branch: 3.18
-            version_minor_release: 9
-          - version_branch: 3.19
-            version_minor_release: 2
-          - version_branch: 3.19
-            version_minor_release: 3
-          - version_branch: 3.19
-            version_minor_release: 4
-          - version_branch: 3.19
-            version_minor_release: 5
-          - version_branch: 3.19
-            version_minor_release: 6
-          - version_branch: 3.19
-            version_minor_release: 7
-          - version_branch: 3.19
-            version_minor_release: 8
-          - version_branch: 3.19
-            version_minor_release: 9
+        version_branch: [3.20]
+        version_minor_release: [0]
 
     steps:
       - name: Checkout out the codebase
