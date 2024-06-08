@@ -184,6 +184,7 @@ jobs:
           context: ./
           file: ./alpine${{ matrix.version_branch }}/Dockerfile
           platforms: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
+          outputs: type=image,name=${{ env.REGISTRY_IMAGE }},name-canonical=true
           labels: ${{ steps.meta.outputs.labels }}
           push: true
           tags: |
@@ -199,7 +200,7 @@ jobs:
       - name: Upload digest
         uses: actions/upload-artifact@v4
         with:
-          name: digests
+          name: digests-${{ matrix.version_branch }}-${{ matrix.version_minor_release }}
           path: /tmp/digests/*
           if-no-files-found: error
           retention-days: 1
@@ -258,6 +259,7 @@ jobs:
           file: ./alpine${{ matrix.version_branch }}/Dockerfile
           platforms: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
           labels: ${{ steps.meta.outputs.labels }}
+          outputs: type=image,name=${{ env.REGISTRY_IMAGE }},name-canonical=true
           push: true
           tags: |
             kirillzak/docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
@@ -272,7 +274,7 @@ jobs:
       - name: Upload digest
         uses: actions/upload-artifact@v4
         with:
-          name: digests
+          name: digests-${{ matrix.version_branch }}-${{ matrix.version_minor_release }}
           path: /tmp/digests/*
           if-no-files-found: error
           retention-days: 1
@@ -331,6 +333,7 @@ jobs:
           file: ./alpine${{ matrix.version_branch }}/Dockerfile
           platforms: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
           labels: ${{ steps.meta.outputs.labels }}
+          outputs: type=image,name=${{ env.REGISTRY_IMAGE }},name-canonical=true
           push: true
           tags: |
             kirillzak/docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
@@ -345,7 +348,7 @@ jobs:
       - name: Upload digest
         uses: actions/upload-artifact@v4
         with:
-          name: digests
+          name: digests-${{ matrix.version_branch }}-${{ matrix.version_minor_release }}
           path: /tmp/digests/*
           if-no-files-found: error
           retention-days: 1
@@ -404,6 +407,7 @@ jobs:
           file: ./alpine${{ matrix.version_branch }}/Dockerfile
           platforms: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
           labels: ${{ steps.meta.outputs.labels }}
+          outputs: type=image,name=${{ env.REGISTRY_IMAGE }},name-canonical=true
           push: true
           tags: |
             kirillzak/docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
@@ -418,7 +422,7 @@ jobs:
       - name: Upload digest
         uses: actions/upload-artifact@v4
         with:
-          name: digests
+          name: digests-${{ matrix.version_branch }}-${{ matrix.version_minor_release }}
           path: /tmp/digests/*
           if-no-files-found: error
           retention-days: 1
@@ -477,6 +481,7 @@ jobs:
           file: ./alpine${{ matrix.version_branch }}/Dockerfile
           platforms: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
           labels: ${{ steps.meta.outputs.labels }}
+          outputs: type=image,name=${{ env.REGISTRY_IMAGE }},name-canonical=true
           push: true
           tags: |
             kirillzak/docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
@@ -491,7 +496,7 @@ jobs:
       - name: Upload digest
         uses: actions/upload-artifact@v4
         with:
-          name: digests
+          name: digests-${{ matrix.version_branch }}-${{ matrix.version_minor_release }}
           path: /tmp/digests/*
           if-no-files-found: error
           retention-days: 1
@@ -544,6 +549,7 @@ jobs:
           file: ./alpine3.20/Dockerfile
           platforms: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
           labels: ${{ steps.meta.outputs.labels }}
+          outputs: type=image,name=${{ env.REGISTRY_IMAGE }},name-canonical=true
           push: true
           tags: |
             kirillzak/docker-alpine-ansible:latest
@@ -558,7 +564,7 @@ jobs:
       - name: Upload digest
         uses: actions/upload-artifact@v4
         with:
-          name: digests
+          name: digests-latest
           path: /tmp/digests/*
           if-no-files-found: error
           retention-days: 1
