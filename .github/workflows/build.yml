@@ -33,7 +33,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build an image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           build-args: ALPINE_VERSION=${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
           context: ./
@@ -77,7 +77,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build an image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           build-args: ALPINE_VERSION=${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
           context: ./
@@ -121,7 +121,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build an image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           build-args: ALPINE_VERSION=${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
           context: ./
@@ -165,7 +165,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build an image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           build-args: ALPINE_VERSION=${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
           context: ./
@@ -209,7 +209,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build an image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           build-args: ALPINE_VERSION=${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
           context: ./
