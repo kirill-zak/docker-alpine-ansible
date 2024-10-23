@@ -89,7 +89,7 @@ jobs:
 
       matrix:
         version_branch: ['3.19']
-        version_minor_release: [0, 1, 2, 3]
+        version_minor_release: [0, 1, 2, 3, 4]
 
     steps:
       - name: Checkout out the codebase
