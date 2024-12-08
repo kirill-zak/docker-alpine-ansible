@@ -406,8 +406,7 @@ jobs:
   latest-release:
     name: Latest release
     runs-on: ubuntu-latest
-    needs: 
-      - test-3-16
+    needs:
       - test-3-17
       - test-3-18
       - test-3-19
