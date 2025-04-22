@@ -113,7 +113,7 @@ jobs:
 
       matrix:
         version_branch: ['3.21']
-        version_minor_release: [0]
+        version_minor_release: [0, 1]
 
     steps:
       - name: Checkout out the codebase
