@@ -196,7 +196,7 @@ jobs:
           - linux/ppc64le
           - linux/s390x
         version_branch: ['3.21']
-        version_minor_release: [0, 1]
+        version_minor_release: [0, 1, 2]
 
     steps:
       - name: Checkout out the codebase
