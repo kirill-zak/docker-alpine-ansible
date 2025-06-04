@@ -8,15 +8,16 @@ Based on Alpine Linux Docker image with built-in Ansible for test playbooks and 
   - `3.19.x`: Based on branch `v3.19`. Releases: `3.19.0`, `3.19.1`, `3.19.2`, `3.19.3`, `3.19.4`, `3.19.5`, `3.19.6`, `3.19.7`.
   - `3.20.x`: Based on branch `v3.20`. Releases: `3.20.0`, `3.20.1`, `3.20.2`, `3.20.3`, `3.20.4`, `3.20.5`, `3.20.6`.
   - `3.21.x`: Based on branch `v3.21`. Releases: `3.21.0`, `3.21.1`, `3.21.2`, `3.21.3`.
-  - `latest`: Latest stable version of Alpine Linux `3.21.x` with built-in Ansible
+  - `3.22.x`: Based on branch `v3.22`. Releases: `3.22.0`.
+  - `latest`: Latest stable version of Alpine Linux `3.22.x` with built-in Ansible
 
 ## How to Build
 
 To build the image on your own locally, do the following:
 
   1. [Install Docker](https://docs.docker.com/engine/installation/).
-  2. `cd` into target directory. For example, target directory for `Alpine Linux 3.21.x` is `alpine3.21`
-  3. Run `docker build -t docker-alpine-ansible . --build-arg ALPINE_VERSION=3.21.<release>`. Where `<release>` is release version of Alpine Linux. List of minor releases can found on official release page of Alpine Linux (https://www.alpinelinux.org/releases/)
+  2. `cd` into target directory. For example, target directory for `Alpine Linux 3.22.x` is `alpine3.22`
+  3. Run `docker build -t docker-alpine-ansible . --build-arg ALPINE_VERSION=3.22.<release>`. Where `<release>` is release version of Alpine Linux. List of minor releases can found on official release page of Alpine Linux (https://www.alpinelinux.org/releases/)
 
 
 ## How to Use

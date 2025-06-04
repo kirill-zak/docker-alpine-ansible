@@ -222,3 +222,48 @@ jobs:
           tags: |
             kirillzak/docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
             ghcr.io/${{ github.repository }}:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
+
+
+  test-build-3-22:
+    name: Test build of image for branch 3.22
+    runs-on: ubuntu-latest
+
+    strategy: 
+      fail-fast: false
+
+      matrix:
+        platform:
+          - linux/386
+          - linux/amd64
+          - linux/arm/v6
+          - linux/arm/v7
+          - linux/arm64/v8
+          - linux/ppc64le
+          - linux/s390x
+        version_branch: ['3.22']
+        version_minor_release: [0]
+
+    steps:
+      - name: Checkout out the codebase
+        uses: actions/checkout@v4
+
+      - name: Add Qemu
+        uses: docker/setup-qemu-action@v3
+
+      - name: Add Docker BuildX
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build an image
+        uses: docker/build-push-action@v6
+        with:
+          build-args: ALPINE_VERSION=${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
+          context: ./
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          load: true
+          file: ./alpine${{ matrix.version_branch }}/Dockerfile
+          platforms: ${{ matrix.platform }}
+          push: false
+          tags: |
+            kirillzak/docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
+            ghcr.io/${{ github.repository }}:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
