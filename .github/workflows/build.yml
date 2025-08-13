@@ -24,7 +24,7 @@ jobs:
 
     steps:
       - name: Checkout out the codebase
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Add Qemu
         uses: docker/setup-qemu-action@v3
@@ -68,7 +68,7 @@ jobs:
 
     steps:
       - name: Checkout out the codebase
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Add Qemu
         uses: docker/setup-qemu-action@v3
@@ -112,7 +112,7 @@ jobs:
 
     steps:
       - name: Checkout out the codebase
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Add Qemu
         uses: docker/setup-qemu-action@v3
@@ -156,7 +156,7 @@ jobs:
 
     steps:
       - name: Checkout out the codebase
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Add Qemu
         uses: docker/setup-qemu-action@v3
@@ -200,7 +200,7 @@ jobs:
 
     steps:
       - name: Checkout out the codebase
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Add Qemu
         uses: docker/setup-qemu-action@v3
@@ -245,7 +245,7 @@ jobs:
 
     steps:
       - name: Checkout out the codebase
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Add Qemu
         uses: docker/setup-qemu-action@v3
