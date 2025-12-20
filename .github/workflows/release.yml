@@ -222,7 +222,7 @@ jobs:
           touch "/tmp/digests/${digest#sha256:}"
 
       - name: Upload digest
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: digests-${{ matrix.version_branch }}-${{ matrix.version_minor_release }}
           path: /tmp/digests/*
@@ -296,7 +296,7 @@ jobs:
           touch "/tmp/digests/${digest#sha256:}"
 
       - name: Upload digest
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: digests-${{ matrix.version_branch }}-${{ matrix.version_minor_release }}
           path: /tmp/digests/*
@@ -370,7 +370,7 @@ jobs:
           touch "/tmp/digests/${digest#sha256:}"
 
       - name: Upload digest
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: digests-${{ matrix.version_branch }}-${{ matrix.version_minor_release }}
           path: /tmp/digests/*
@@ -444,7 +444,7 @@ jobs:
           touch "/tmp/digests/${digest#sha256:}"
 
       - name: Upload digest
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: digests-${{ matrix.version_branch }}-${{ matrix.version_minor_release }}
           path: /tmp/digests/*
@@ -518,7 +518,7 @@ jobs:
           touch "/tmp/digests/${digest#sha256:}"
 
       - name: Upload digest
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: digests-${{ matrix.version_branch }}-${{ matrix.version_minor_release }}
           path: /tmp/digests/*
@@ -592,7 +592,7 @@ jobs:
           touch "/tmp/digests/${digest#sha256:}"
 
       - name: Upload digest
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: digests-${{ matrix.version_branch }}-${{ matrix.version_minor_release }}
           path: /tmp/digests/*
@@ -661,7 +661,7 @@ jobs:
           touch "/tmp/digests/${digest#sha256:}"
 
       - name: Upload digest
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: digests-latest
           path: /tmp/digests/*
