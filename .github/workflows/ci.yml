@@ -8,30 +8,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  test-3-19:
-    name: Test for branch 3.19
-    runs-on: ubuntu-latest
-
-    strategy: 
-      fail-fast: false
-
-      matrix:
-        version_branch: ['3.19']
-        version_minor_release: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-
-    steps:
-      - name: Checkout out the codebase
-        uses: actions/checkout@v6
-
-      - name: Test building image
-        run: docker build -t docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }} ./alpine${{ matrix.version_branch }}/. --build-arg ALPINE_VERSION=${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
-      
-      - name: Run the built image
-        run: docker run --name test-container --detach --privileged --volume /sys/fs/cgroup:/sys/fs/cgroup:ro docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
-
-      - name: Verify Ansible is accessible in the built image
-        run: docker exec --tty test-container env TERM=xterm ansible --version
-
   test-3-20:
     name: Test for branch 3.20
     runs-on: ubuntu-latest
