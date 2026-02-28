@@ -64,7 +64,7 @@ jobs:
           - linux/ppc64le
           - linux/s390x
         version_branch: ['3.21']
-        version_minor_release: [0, 1, 2, 3, 4]
+        version_minor_release: [0, 1, 2, 3, 4, 5]
 
     steps:
       - name: Checkout out the codebase
@@ -90,7 +90,6 @@ jobs:
           tags: |
             kirillzak/docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
             ghcr.io/${{ github.repository }}:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
-
 
   test-build-3-22:
     name: Test build of image for branch 3.22
