@@ -68,7 +68,7 @@ jobs:
 
       matrix:
         version_branch: ['3.22']
-        version_minor_release: [0, 1]
+        version_minor_release: [0, 1, 2]
 
     steps:
       - name: Checkout out the codebase
@@ -245,7 +245,7 @@ jobs:
 
       matrix:
         version_branch: ['3.22']
-        version_minor_release: [0, 1]
+        version_minor_release: [0, 1, 2]
 
     steps:
       - name: Checkout out the codebase
@@ -344,7 +344,7 @@ jobs:
         id: build
         uses: docker/build-push-action@v6
         with:
-          build-args: ALPINE_VERSION=3.22.1
+          build-args: ALPINE_VERSION=3.22.2
           context: ./
           file: ./alpine3.22/Dockerfile
           platforms: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
