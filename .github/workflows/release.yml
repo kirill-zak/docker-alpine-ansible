@@ -22,7 +22,7 @@ jobs:
           echo "Checking tag: ${tag}"
           if ! echo "$tag" | grep -Eq '^v?[0-9]{1,2}\.[0-9]{1,2}(\.[0-9]{1,2})?$'; then
             echo "::error::Invalid release tag '${tag}'."
-            echo "::error::Expected x.x or x.x.x, optional 'v' prefix (e.g., 3.23.4, 3.20, v3.23.4, v3.20), no pre-release suffixes."
+            echo "::error::Expected x.x or x.x.x, optional 'v' prefix (e.g., 3.23.4, 3.21, v3.23.4, v3.21), no pre-release suffixes."
             exit 1
           fi
 
