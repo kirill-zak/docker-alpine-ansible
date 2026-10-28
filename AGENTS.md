@@ -1,7 +1,7 @@
 # AGENTS.md
 
 ## About the project
-docker-alpine-ansible is an Alpine Linux (3.20–3.23) image with Ansible
+docker-alpine-ansible is an Alpine Linux (3.21–3.23) image with Ansible
 pre-installed, designed for testing playbooks and roles. All versions live in a
 single repository and are published as per-release tags to Docker Hub and GHCR.
 
@@ -26,10 +26,10 @@ single repository and are published as per-release tags to Docker Hub and GHCR.
 - `.gitignore` — files kept out of git (`.context`, `.omo`).
 
 ## Versioning
-- Images are published per Alpine release tag (e.g. `3.20.0` … `3.20.10`,
+- Images are published per Alpine release tag (e.g. `3.21.0` … `3.21.7`,
   `3.23.4`), not per branch.
-- A release tag implies a branch: `3.20.5` → branch `3.20` → build context
-  `alpine3.20`. The build must pass `--build-arg ALPINE_VERSION=<full release>`
+- A release tag implies a branch: `3.21.5` → branch `3.21` → build context
+  `alpine3.21`. The build must pass `--build-arg ALPINE_VERSION=<full release>`
   to select the base image.
 - `version_branch` (workflow input and Makefile variable) holds a full release;
   the branch (context) is derived by stripping the last dot segment.
@@ -45,13 +45,13 @@ single repository and are published as per-release tags to Docker Hub and GHCR.
   `make test-build version_branch=3.22.4`).
 
 ## CI/CD conventions
-- Release matrix: `3.20.x`, `3.21.x`, `3.22.x`, `3.23.x` (full list in the
+- Release matrix: `3.21.x`, `3.22.x`, `3.23.x` (full list in the
   `versions` output of `config.yml`).
 - The `latest` tag maps to the newest release (`3.23.4`), set via
   `latest_version` in `config.yml`.
 - Versions, platforms, and the `latest` mapping live in `config.yml` — edit it to
   change the build/test matrix; no other workflow needs editing for a version change.
-- `3.16.x`–`3.19.x` are archived — no longer built or published (see README,
+- `3.16.x`–`3.20.x` are archived — no longer built or published (see README,
   "Archive tags").
 - Platforms: `linux/386`, `linux/amd64`, `linux/arm/v6`, `linux/arm/v7`,
   `linux/arm64/v8`, `linux/ppc64le`, `linux/s390x`.
