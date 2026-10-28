@@ -7,462 +7,54 @@ on:
       - '*'
   workflow_dispatch:
 
-env:
-  REGISTRY_IMAGE: kirillzak/docker-alpine-ansible
+permissions:
+  contents: read
 
 jobs:
-  test-3-20:
-    name: Test for branch 3.20
+  validate-tag:
+    name: Validate release tag
     runs-on: ubuntu-latest
-
-    strategy: 
-      fail-fast: false
-
-      matrix:
-        version_branch: ['3.20']
-        version_minor_release: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-
+    if: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/') }}
     steps:
-      - name: Checkout out the codebase
-        uses: actions/checkout@v7
+      - name: Validate tag format (vx.x[.x])
+        run: |
+          tag="${GITHUB_REF#refs/tags/}"
+          echo "Checking tag: ${tag}"
+          if ! echo "$tag" | grep -Eq '^v?[0-9]{1,2}\.[0-9]{1,2}(\.[0-9]{1,2})?$'; then
+            echo "::error::Invalid release tag '${tag}'."
+            echo "::error::Expected x.x or x.x.x, optional 'v' prefix (e.g., 3.23.4, 3.20, v3.23.4, v3.20), no pre-release suffixes."
+            exit 1
+          fi
 
-      - name: Test building image
-        run: docker build -t docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }} ./alpine${{ matrix.version_branch }}/. --build-arg ALPINE_VERSION=${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
-      
-      - name: Run the built image
-        run: docker run --name test-container --detach --privileged --volume /sys/fs/cgroup:/sys/fs/cgroup:ro docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
+  config:
+    uses: ./.github/workflows/config.yml
 
-      - name: Verify Ansible is accessible in the built image
-        run: docker exec --tty test-container env TERM=xterm ansible --version
-
-  test-3-21:
-    name: Test for branch 3.21
-    runs-on: ubuntu-latest
-
-    strategy: 
+  test:
+    name: Test
+    needs: config
+    strategy:
       fail-fast: false
-
       matrix:
-        version_branch: ['3.21']
-        version_minor_release: [0, 1, 2, 3, 4, 5, 6, 7]
+        version_branch: ${{ fromJSON(needs.config.outputs.versions) }}
+    uses: ./.github/workflows/test-image.yml
+    with:
+      version_branch: ${{ matrix.version_branch }}
 
-    steps:
-      - name: Checkout out the codebase
-        uses: actions/checkout@v7
-
-      - name: Test building image
-        run: docker build -t docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }} ./alpine${{ matrix.version_branch }}/. --build-arg ALPINE_VERSION=${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
-      
-      - name: Run the built image
-        run: docker run --name test-container --detach --privileged --volume /sys/fs/cgroup:/sys/fs/cgroup:ro docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
-
-      - name: Verify Ansible is accessible in the built image
-        run: docker exec --tty test-container env TERM=xterm ansible --version
-
-  test-3-22:
-    name: Test for branch 3.22
-    runs-on: ubuntu-latest
-
-    strategy: 
-      fail-fast: false
-
-      matrix:
-        version_branch: ['3.22']
-        version_minor_release: [0, 1, 2, 3, 4]
-
-    steps:
-      - name: Checkout out the codebase
-        uses: actions/checkout@v7
-
-      - name: Test building image
-        run: docker build -t docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }} ./alpine${{ matrix.version_branch }}/. --build-arg ALPINE_VERSION=${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
-      
-      - name: Run the built image
-        run: docker run --name test-container --detach --privileged --volume /sys/fs/cgroup:/sys/fs/cgroup:ro docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
-
-      - name: Verify Ansible is accessible in the built image
-        run: docker exec --tty test-container env TERM=xterm ansible --version
-
-  test-3-23:
-    name: Test for branch 3.23
-    runs-on: ubuntu-latest
-
-    strategy: 
-      fail-fast: false
-
-      matrix:
-        version_branch: ['3.23']
-        version_minor_release: [0, 2, 3, 4]
-
-    steps:
-      - name: Checkout out the codebase
-        uses: actions/checkout@v7
-
-      - name: Test building image
-        run: docker build -t docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }} ./alpine${{ matrix.version_branch }}/. --build-arg ALPINE_VERSION=${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
-      
-      - name: Run the built image
-        run: docker run --name test-container --detach --privileged --volume /sys/fs/cgroup:/sys/fs/cgroup:ro docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
-
-      - name: Verify Ansible is accessible in the built image
-        run: docker exec --tty test-container env TERM=xterm ansible --version
-
-  tag-release-3-20:
-    name: Release tags for branch 3.20
-    runs-on: ubuntu-latest
-    needs: test-3-20
-
+  release:
+    name: Release ${{ matrix.version_branch }}
+    needs: [config, test, validate-tag]
     permissions:
       contents: read
       packages: write
-
-    strategy: 
+    if: ${{ needs.test.result == 'success' && (needs.validate-tag.result == 'success' || needs.validate-tag.result == 'skipped') }}
+    strategy:
       fail-fast: false
-
       matrix:
-        version_branch: ['3.20']
-        version_minor_release: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-
-    steps:
-      - name: Checkout out the codebase
-        uses: actions/checkout@v7
-
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v6
-        with:
-          images: ${{ env.REGISTRY_IMAGE }}
-
-      - name: Add Qemu
-        uses: docker/setup-qemu-action@v4
-
-      - name: Add Docker BuildX
-        uses: docker/setup-buildx-action@v4
-
-      - name: Login to DockerHub Registry
-        uses: docker/login-action@v4.7.0
-        with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v4.7.0
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GHCR_REGISTRY_TOKEN }}
-
-      - name: Build and push image
-        id: build
-        uses: docker/build-push-action@v7
-        with:
-          build-args: ALPINE_VERSION=${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
-          context: ./
-          file: ./alpine${{ matrix.version_branch }}/Dockerfile
-          platforms: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
-          labels: ${{ steps.meta.outputs.labels }}
-          outputs: type=image,name=${{ env.REGISTRY_IMAGE }},name-canonical=true
-          push: true
-          tags: |
-            kirillzak/docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
-            ghcr.io/${{ github.repository }}:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
-      
-      - name: Export digest
-        run: |
-          mkdir -p /tmp/digests
-          digest="${{ steps.build.outputs.digest }}"
-          touch "/tmp/digests/${digest#sha256:}"
-
-      - name: Upload digest
-        uses: actions/upload-artifact@v7
-        with:
-          name: digests-${{ matrix.version_branch }}-${{ matrix.version_minor_release }}
-          path: /tmp/digests/*
-          if-no-files-found: error
-          retention-days: 1
-
-  tag-release-3-21:
-    name: Release tags for branch 3.21
-    runs-on: ubuntu-latest
-    needs: test-3-21
-
-    permissions:
-      contents: read
-      packages: write
-
-    strategy: 
-      fail-fast: false
-
-      matrix:
-        version_branch: ['3.21']
-        version_minor_release: [0, 1, 2, 3, 4, 5, 6, 7]
-
-    steps:
-      - name: Checkout out the codebase
-        uses: actions/checkout@v7
-
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v6
-        with:
-          images: ${{ env.REGISTRY_IMAGE }}
-
-      - name: Add Qemu
-        uses: docker/setup-qemu-action@v4
-
-      - name: Add Docker BuildX
-        uses: docker/setup-buildx-action@v4
-
-      - name: Login to DockerHub Registry
-        uses: docker/login-action@v4.7.0
-        with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v4.7.0
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GHCR_REGISTRY_TOKEN }}
-
-      - name: Build and push image
-        id: build
-        uses: docker/build-push-action@v7
-        with:
-          build-args: ALPINE_VERSION=${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
-          context: ./
-          file: ./alpine${{ matrix.version_branch }}/Dockerfile
-          platforms: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
-          labels: ${{ steps.meta.outputs.labels }}
-          outputs: type=image,name=${{ env.REGISTRY_IMAGE }},name-canonical=true
-          push: true
-          tags: |
-            kirillzak/docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
-            ghcr.io/${{ github.repository }}:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
-      
-      - name: Export digest
-        run: |
-          mkdir -p /tmp/digests
-          digest="${{ steps.build.outputs.digest }}"
-          touch "/tmp/digests/${digest#sha256:}"
-
-      - name: Upload digest
-        uses: actions/upload-artifact@v7
-        with:
-          name: digests-${{ matrix.version_branch }}-${{ matrix.version_minor_release }}
-          path: /tmp/digests/*
-          if-no-files-found: error
-          retention-days: 1
-
-  tag-release-3-22:
-    name: Release tags for branch 3.22
-    runs-on: ubuntu-latest
-    needs: test-3-22
-
-    permissions:
-      contents: read
-      packages: write
-
-    strategy: 
-      fail-fast: false
-
-      matrix:
-        version_branch: ['3.22']
-        version_minor_release: [0, 1, 2, 3, 4]
-
-    steps:
-      - name: Checkout out the codebase
-        uses: actions/checkout@v7
-
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v6
-        with:
-          images: ${{ env.REGISTRY_IMAGE }}
-
-      - name: Add Qemu
-        uses: docker/setup-qemu-action@v4
-
-      - name: Add Docker BuildX
-        uses: docker/setup-buildx-action@v4
-
-      - name: Login to DockerHub Registry
-        uses: docker/login-action@v4.7.0
-        with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v4.7.0
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GHCR_REGISTRY_TOKEN }}
-
-      - name: Build and push image
-        id: build
-        uses: docker/build-push-action@v7
-        with:
-          build-args: ALPINE_VERSION=${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
-          context: ./
-          file: ./alpine${{ matrix.version_branch }}/Dockerfile
-          platforms: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
-          labels: ${{ steps.meta.outputs.labels }}
-          outputs: type=image,name=${{ env.REGISTRY_IMAGE }},name-canonical=true
-          push: true
-          tags: |
-            kirillzak/docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
-            ghcr.io/${{ github.repository }}:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
-      
-      - name: Export digest
-        run: |
-          mkdir -p /tmp/digests
-          digest="${{ steps.build.outputs.digest }}"
-          touch "/tmp/digests/${digest#sha256:}"
-
-      - name: Upload digest
-        uses: actions/upload-artifact@v7
-        with:
-          name: digests-${{ matrix.version_branch }}-${{ matrix.version_minor_release }}
-          path: /tmp/digests/*
-          if-no-files-found: error
-          retention-days: 1
-
-  tag-release-3-23:
-    name: Release tags for branch 3.23
-    runs-on: ubuntu-latest
-    needs: test-3-23
-
-    permissions:
-      contents: read
-      packages: write
-
-    strategy: 
-      fail-fast: false
-
-      matrix:
-        version_branch: ['3.23']
-        version_minor_release: [0, 2, 3, 4]
-
-    steps:
-      - name: Checkout out the codebase
-        uses: actions/checkout@v7
-
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v6
-        with:
-          images: ${{ env.REGISTRY_IMAGE }}
-
-      - name: Add Qemu
-        uses: docker/setup-qemu-action@v4
-
-      - name: Add Docker BuildX
-        uses: docker/setup-buildx-action@v4
-
-      - name: Login to DockerHub Registry
-        uses: docker/login-action@v4.7.0
-        with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v4.7.0
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GHCR_REGISTRY_TOKEN }}
-
-      - name: Build and push image
-        id: build
-        uses: docker/build-push-action@v7
-        with:
-          build-args: ALPINE_VERSION=${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
-          context: ./
-          file: ./alpine${{ matrix.version_branch }}/Dockerfile
-          platforms: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
-          labels: ${{ steps.meta.outputs.labels }}
-          outputs: type=image,name=${{ env.REGISTRY_IMAGE }},name-canonical=true
-          push: true
-          tags: |
-            kirillzak/docker-alpine-ansible:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
-            ghcr.io/${{ github.repository }}:${{ matrix.version_branch }}.${{ matrix.version_minor_release }}
-      
-      - name: Export digest
-        run: |
-          mkdir -p /tmp/digests
-          digest="${{ steps.build.outputs.digest }}"
-          touch "/tmp/digests/${digest#sha256:}"
-
-      - name: Upload digest
-        uses: actions/upload-artifact@v7
-        with:
-          name: digests-${{ matrix.version_branch }}-${{ matrix.version_minor_release }}
-          path: /tmp/digests/*
-          if-no-files-found: error
-          retention-days: 1
-
-  latest-release:
-    name: Latest release
-    runs-on: ubuntu-latest
-    needs:
-      - test-3-23
-
-    steps:
-      - name: Checkout out the codebase
-        uses: actions/checkout@v7
-
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v6
-        with:
-          images: ${{ env.REGISTRY_IMAGE }}
-
-      - name: Add Qemu
-        uses: docker/setup-qemu-action@v4
-
-      - name: Add Docker BuildX
-        uses: docker/setup-buildx-action@v4
-
-      - name: Login to DockerHub Registry
-        uses: docker/login-action@v4.7.0
-        with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v4.7.0
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GHCR_REGISTRY_TOKEN }}
-
-      - name: Build and push image
-        id: build
-        uses: docker/build-push-action@v7
-        with:
-          build-args: ALPINE_VERSION=3.23.4
-          context: ./
-          file: ./alpine3.23/Dockerfile
-          platforms: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
-          labels: ${{ steps.meta.outputs.labels }}
-          outputs: type=image,name=${{ env.REGISTRY_IMAGE }},name-canonical=true
-          push: true
-          tags: |
-            kirillzak/docker-alpine-ansible:latest
-            ghcr.io/${{ github.repository }}:latest
-
-      - name: Export digest
-        run: |
-          mkdir -p /tmp/digests
-          digest="${{ steps.build.outputs.digest }}"
-          touch "/tmp/digests/${digest#sha256:}"
-
-      - name: Upload digest
-        uses: actions/upload-artifact@v7
-        with:
-          name: digests-latest
-          path: /tmp/digests/*
-          if-no-files-found: error
-          retention-days: 1
+        version_branch: ${{ fromJSON(needs.config.outputs.versions) }}
+    uses: ./.github/workflows/build-image.yml
+    with:
+      version_branch: ${{ matrix.version_branch }}
+      platforms: ${{ join(fromJSON(needs.config.outputs.platforms), ',') }}
+      additional_tags: ${{ matrix.version_branch == needs.config.outputs.latest_version && 'latest' || '' }}
+      push: true
+    secrets: inherit
