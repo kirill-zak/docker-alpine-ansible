@@ -26,7 +26,7 @@ single repository and are published as per-release tags to Docker Hub and GHCR.
 - `.gitignore` — files kept out of git (`.context`, `.omo`).
 
 ## Versioning
-- Images are published per Alpine release tag (e.g. `3.21.0` … `3.21.8`,
+- Images are published per Alpine release tag (e.g. `3.21.0` … `3.21.9`,
   `3.23.4`), not per branch.
 - A release tag implies a branch: `3.21.5` → branch `3.21` → build context
   `alpine3.21`. The build must pass `--build-arg ALPINE_VERSION=<full release>`
