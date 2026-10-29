@@ -67,6 +67,9 @@ single repository and are published as per-release tags to Docker Hub and GHCR.
   GitHub runner), mirroring docker-ubuntu-ansible.
 - Images are published to Docker Hub (`kirillzak/docker-alpine-ansible`) and GHCR
   (`ghcr.io/<owner>/<repo>`).
+- Once the work on a branch is complete and the PR passes all checks, merge it
+  into `master` with the **delete branch** option enabled, so the remote work
+  branch is removed from the repository after the merge.
 
 ## Commit message conventions
 Pull requests and commit messages are written in English.
