@@ -1,7 +1,7 @@
 # AGENTS.md
 
 ## About the project
-docker-alpine-ansible is an Alpine Linux (3.22–3.23) image with Ansible
+docker-alpine-ansible is an Alpine Linux (3.22–3.24) image with Ansible
 pre-installed, designed for testing playbooks and roles. All versions live in a
 single repository and are published as per-release tags to Docker Hub and GHCR.
 
@@ -27,7 +27,7 @@ single repository and are published as per-release tags to Docker Hub and GHCR.
 
 ## Versioning
 - Images are published per Alpine release tag (e.g. `3.22.0` … `3.22.8`,
-  `3.23.8`), not per branch.
+  `3.24.4`), not per branch.
 - A release tag implies a branch: `3.22.5` → branch `3.22` → build context
   `alpine3.22`. The build must pass `--build-arg ALPINE_VERSION=<full release>`
   to select the base image.
@@ -42,12 +42,12 @@ single repository and are published as per-release tags to Docker Hub and GHCR.
      --volume /sys/fs/cgroup:/sys/fs/cgroup:ro docker-alpine-ansible:3.23.4`
   3. `podman exec --tty test-container env TERM=xterm ansible --version`
 - Or via the Makefile: `make test-build` (override the version with
-  `make test-build version_branch=3.22.4`).
+  `make test-build version_branch=3.24.4`).
 
 ## CI/CD conventions
-- Release matrix: `3.22.x`, `3.23.x` (full list in the
+- Release matrix: `3.22.x`, `3.23.x`, `3.24.x` (full list in the
   `versions` output of `config.yml`).
-- The `latest` tag maps to the newest release (`3.23.8`), set via
+- The `latest` tag maps to the newest release (`3.24.4`), set via
   `latest_version` in `config.yml`.
 - Versions, platforms, and the `latest` mapping live in `config.yml` — edit it to
   change the build/test matrix; no other workflow needs editing for a version change.

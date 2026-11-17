@@ -1,5 +1,5 @@
 # Alpine release version to build and test (defaults to the latest supported release)
-version_branch ?= 3.23.8
+version_branch ?= 3.24.4
 
 # Local image and container names used by the test build
 TEST_IMAGE ?= docker-alpine-ansible
