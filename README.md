@@ -3,9 +3,10 @@ Based on Alpine Linux Docker image with built-in Ansible for test playbooks and 
 
 ## Tags
 
+  - `3.24.x`: Based on branch `v3.24`. Releases: `3.24.0`, `3.24.1`, `3.24.2`, `3.24.3`, `3.24.4`.
   - `3.22.x`: Based on branch `v3.22`. Releases: `3.22.0`, `3.22.1`, `3.22.2`, `3.22.3`, `3.22.4`, `3.22.5`, `3.22.6`, `3.22.7`, `3.22.8`.
   - `3.23.x`: Based on branch `v3.23`. Releases: `3.23.0`, `3.23.2`, `3.23.3`, `3.23.4`, `3.23.5`, `3.23.6`, `3.23.7`, `3.23.8`.
-  - `latest`: Latest stable version of Alpine Linux `3.23.x` with built-in Ansible
+  - `latest`: Latest stable version of Alpine Linux `3.24.x` with built-in Ansible
 
 ## How to Build
 
